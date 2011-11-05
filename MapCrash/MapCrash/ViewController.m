@@ -79,10 +79,6 @@
     double lon = region.center.longitude;
     double lat = region.center.latitude;
     
-    /*
-    NSString *dummyPolygon = [NSString stringWithString:@"POLYGON ((7.49791145324707 47.06173806969911, 7.540740966796875 47.06173806969911, 7.540740966796875 47.035479152859786, 7.49791145324707 47.035479152859786, 7.49791145324707 47.06173806969911))"];
-    */
-    
     NSString *dummyPolygon = [NSString stringWithFormat:@"POLYGON ((%f %f, %f %f, %f %f, %f %f))",
             lon,lat, lon-0.01, lat-.01, lon+0.01,lat-0.01, lon,lat]; 
     [mapView addOverlay:(id<MKOverlay>)[self parseShapeWKT:dummyPolygon]];
