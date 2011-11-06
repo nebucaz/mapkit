@@ -60,6 +60,9 @@
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
+- (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
+    NSLog(@"regionWillChangeAnimated");
+}
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay
 {
@@ -74,6 +77,8 @@
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
 
+    NSLog(@"regionDidChangeAnimated");
+    
     MKCoordinateRegion region = self.theMapView.region;
     
     double lon = region.center.longitude;
@@ -143,7 +148,7 @@
     }
     free(coords);
 
-    return [newPoly autorelease];
+    return newPoly;
 }
 
 @end
