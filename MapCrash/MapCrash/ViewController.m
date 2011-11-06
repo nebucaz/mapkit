@@ -61,7 +61,7 @@
 }
 
 - (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated {
-    NSLog(@"regionWillChangeAnimated");
+
 }
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id <MKOverlay>)overlay
@@ -76,79 +76,20 @@
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
-
-    NSLog(@"regionDidChangeAnimated");
     
     MKCoordinateRegion region = self.theMapView.region;
     
     double lon = region.center.longitude;
     double lat = region.center.latitude;
-    
-    NSString *dummyPolygon = [NSString stringWithFormat:@"POLYGON ((%f %f, %f %f, %f %f, %f %f))",
-            lon,lat, lon-0.01, lat-.01, lon+0.01,lat-0.01, lon,lat]; 
-    [mapView addOverlay:(id<MKOverlay>)[self parseShapeWKT:dummyPolygon]];
-}
 
-
-- (int) makeCoords:(NSString*) wktCoords coordsArray:(CLLocationCoordinate2D **) coordsOut {
-    int read = 0;
+    CLLocationCoordinate2D *coords = malloc(sizeof(CLLocationCoordinate2D) * 4);
     
-    NSArray *tuples = [wktCoords componentsSeparatedByString:@","];
-    NSInteger bufferSize = sizeof(CLLocationCoordinate2D) * [tuples count];
-    CLLocationCoordinate2D *coords = malloc(bufferSize);
+    coords[0] = CLLocationCoordinate2DMake(lat, lon);
+    coords[1] = CLLocationCoordinate2DMake(lat-0.1, lon-0.1);
+    coords[2] = CLLocationCoordinate2DMake(lat+0.1, lon-0.1);
+    coords[3] = CLLocationCoordinate2DMake(lat, lon);
     
-    for (NSString *tuple in tuples) {
-        float lat, lon;
-        NSScanner *scanner = [[NSScanner alloc] initWithString:tuple];
-        [scanner setCharactersToBeSkipped:[NSCharacterSet characterSetWithCharactersInString:@" "]];
-        
-        BOOL success = [scanner scanFloat:&lon];
-        if (success) {
-            success = [scanner scanFloat:&lat];
-            if (success) {
-                CLLocationCoordinate2D c = CLLocationCoordinate2DMake(lat, lon);
-                if (CLLocationCoordinate2DIsValid(c))
-                    coords[read++] = c;
-            }       
-        }
-        [scanner release];
-    }
-    
-    *coordsOut = coords;
-    return read;
-}
-
-- (MKPolygon*) parseShapeWKT:(NSString*)wkt {
-    MKPolygon *newPoly = nil;
-
-    if ([wkt rangeOfString:@"POLYGON (("].location == NSNotFound) {
-        return newPoly; 
-    }
-    else {
-        wkt = [wkt substringFromIndex:10];
-        wkt = [wkt substringToIndex:[wkt length] - 2];
-    }
-    
-    CLLocationCoordinate2D *coords = nil;
-    NSUInteger coordsLen = 0;
-
-    
-    // has inner rings?
-    NSArray *rings = [wkt componentsSeparatedByString:@"),("];
-    
-    // ignore inner rings
-    if (rings != nil && [rings count] > 1) {
-        wkt = [rings objectAtIndex:0];
-    }
-    
-    coordsLen = [self makeCoords:wkt coordsArray:&coords];
-  
-    if (coordsLen > 0) {
-        newPoly = [MKPolygon polygonWithCoordinates:coords count:coordsLen]; //interiorPolygons:innerPolys
-    }
-    free(coords);
-
-    return newPoly;
+    [mapView addOverlay:(id<MKOverlay>)[MKPolygon polygonWithCoordinates:coords count:4]];
 }
 
 @end
