@@ -33,6 +33,7 @@
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
     
+    // http://stackoverflow.com/questions/61838/do-i-need-to-release-xib-resources
     [self.theMapView release]; 
     self.theMapView = nil;
 }
