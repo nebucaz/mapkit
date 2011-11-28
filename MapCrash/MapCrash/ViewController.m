@@ -32,6 +32,9 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+    
+    [self.theMapView release]; 
+    self.theMapView = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
