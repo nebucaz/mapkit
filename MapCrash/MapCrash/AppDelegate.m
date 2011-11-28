@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 
 #import "ViewController.h"
+#import "TVOutManager.h"
 
 @implementation AppDelegate
 
@@ -29,6 +30,10 @@
     self.viewController = [[[ViewController alloc] initWithNibName:@"ViewController" bundle:nil] autorelease];
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
+    
+    // Mirror Screen to TV-Out http://www.touchcentric.com/blog/archives/123
+    [[TVOutManager sharedInstance] startTVOut];
+    
     return YES;
 }
 
